@@ -149,11 +149,3 @@ jobs:
             -F parse_mode="HTML" \
             -F caption=$'✅ <b>Kernel CI build success</b>\n\n<b>Device:</b> '"$DEVICE"$'\n<b>File:</b> '"$ZIP"$'\n<b>Size:</b> '"$SIZE"$'\n<b>Branch:</b> ${{ github.ref_name }}\n<b>Commit:</b> <code>'"${GITHUB_SHA::7}"$'</code>' \
             "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
-
-      - name: ❌ Telegram Failed
-        if: failure()
-        run: |
-          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-            -d chat_id="${TELEGRAM_CHAT_ID}" \
-            -d parse_mode="HTML" \
-            -d text="❌ <b>Kernel CI build failed</b>%0A%0A<b>Device:</b> ${DEVICE}%0A<b>Branch:</b> ${{ github.ref_name }}%0A<b>Commit:</b> <code>${GITHUB_SHA::7}</code>%0A<b>Log:</b> <a href=\"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\">#${{ github.run_number }}</a>"
