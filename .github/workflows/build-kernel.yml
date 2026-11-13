@@ -1,4 +1,4 @@
-name: Mi8953-4.19-BakaSU
+name: Mi8953-4.19
 
 on:
   workflow_dispatch:
@@ -111,7 +111,7 @@ jobs:
       - name: 📥 Setup BakaSU + NoMount (KSU)
         if: matrix.variant == 'KSU'
         run: |
-          curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s v4.2.0-rc3
+          curl -LSs "https://raw.githubusercontent.com/manipvlator/KernelSU/refs/heads/main/kernel/setup.sh" | bash -s main 
           curl -LSs "https://raw.githubusercontent.com/maxsteeel/nomount/refs/heads/dev/kernel/setup.sh" | bash -s master
 
       - name: 🛠️ Build
