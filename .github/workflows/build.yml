@@ -97,22 +97,11 @@ jobs:
           echo "DEFCONFIG=$DEFCONFIG" >> $GITHUB_ENV
           echo "FRAGMENT=$FRAGMENT" >> $GITHUB_ENV
           
-      - name: 📥 Setup NoMount
-        run: |
-         curl -LSs "https://raw.githubusercontent.com/maxsteeel/nomount/refs/heads/dev/kernel/setup.sh" | bash -s master
-
       - name: 📥 Setup BakaSU
         run: |
-          cd "$GITHUB_WORKSPACE/kernel"   # sesuaikan: root source kernel kamu
+         curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s v4.2.0-rc3
+         curl "https://raw.githubusercontent.com/maxsteeel/nomount/refs/heads/dev/kernel/setup.sh" | bash -s master
 
-          # Hindari "empty directory trap": folder KernelSU kosong bikin setup.sh keluar diam-diam
-          if [ -d KernelSU ] && [ -z "$(ls -A KernelSU)" ]; then rm -rf KernelSU; fi
-
-          # Pin ke tag rilis supaya build reproducible
-          curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s v4.2.0-rc3
-
-          # Pastikan benar-benar ter-clone
-          test -f KernelSU/kernel/Kconfig || { echo "BakaSU gagal ter-setup"; exit 1; }
           
       - name: 🛠️ Build
         run: |
