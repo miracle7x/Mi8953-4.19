@@ -96,6 +96,7 @@ jobs:
           echo "Pakai defconfig: $DEFCONFIG + $FRAGMENT"
           echo "DEFCONFIG=$DEFCONFIG" >> $GITHUB_ENV
           echo "FRAGMENT=$FRAGMENT" >> $GITHUB_ENV
+          
       - name: 🥷 Remove hardcoded build user/host
         run: |
           echo "== Sebelum =="
@@ -127,12 +128,15 @@ jobs:
           mkdir -p out
           JOBS=$(( $(nproc --all) * 2 ))
 
-          make -j${JOBS} O=out ${DEFCONFIG}
-          make -j${JOBS} O=out \
-            CC="ccache clang" \
-            HOSTCC="ccache gcc" \
-            HOSTCXX="ccache g++" \
-            Image.gz-dtb
+          MAKE_ARGS=(
+            O=out
+            CC="ccache clang"
+            HOSTCC="ccache gcc"
+            HOSTCXX="ccache g++"
+          )
+
+          make -j${JOBS} "${MAKE_ARGS[@]}" ${DEFCONFIG} ${FRAGMENT}
+          make -j${JOBS} "${MAKE_ARGS[@]}" Image.gz-dtb
 
       - name: 📦 Package
         run: |
