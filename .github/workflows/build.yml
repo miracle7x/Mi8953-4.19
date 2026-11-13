@@ -97,9 +97,9 @@ jobs:
           echo "DEFCONFIG=$DEFCONFIG" >> $GITHUB_ENV
           echo "FRAGMENT=$FRAGMENT" >> $GITHUB_ENV
           
-      - name: 📥 Setup KernelSU
+      - name: 📥 Setup BakaSU
         run: |
-          curl -LSs "https://raw.githubusercontent.com/manipvlator/KernelSU/refs/heads/main/kernel/setup.sh" | bash -s main
+          curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/refs/heads/main/kernel/setup.sh" | bash -s main
           curl -LSs "https://raw.githubusercontent.com/maxsteeel/nomount/refs/heads/dev/kernel/setup.sh" | bash -s master
 
       - name: 🛠️ Build
@@ -121,7 +121,7 @@ jobs:
 
       - name: 📦 Package Anykernel3
         run: |
-          git clone --depth=1 https://github.com/KanariaAlt/AnyKernel3.git anykernel
+          git clone --depth=1 https://github.com/miracle7x/AnyKernel3.git anykernel
           rm -rf anykernel/.git anykernel/README.md anykernel/modules anykernel/patch anykernel/ramdisk
 
           sed -i "s/^kernel.string=.*/kernel.string=perf kernel ${DEVICE} by cappuccino/" anykernel/anykernel.sh
