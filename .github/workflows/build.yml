@@ -1,4 +1,4 @@
-name: Mi8953-4.19-Kernel
+name: Mi8953-4.19-Kernel-BakaSU
 
 on:
   workflow_dispatch:
