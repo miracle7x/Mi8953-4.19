@@ -132,17 +132,17 @@ jobs:
           cp out/arch/arm64/boot/Image.gz-dtb anykernel/Image.gz-dtb
 
           cd anykernel
-          zip -r9 ../ast-playground-${DEVICE}-$(date +'%Y%m%d').zip
+          zip -r9 ../ast-playground-ksu-$(date +'%Y%m%d').zip
 
       - name: ⬇️ Upload
         uses: actions/upload-artifact@v4
         with:
-          name: ast-playground-${{ env.DEVICE }}
-          path: ast-playground-${{ env.DEVICE }}-*.zip
+          name: ast-playground-ksu
+          path: ast-playground-ksu-*.zip
 
       - name: ⬇️ Telegram Upload
         run: |
-          ZIP=$(ls ast-playground-${DEVICE}-*.zip | head -n1)
+          ZIP=$(ls ast-playground-ksu-*.zip | head -n1)
           SIZE=$(du -h "$ZIP" | cut -f1)
           curl -s -F document=@"$ZIP" \
             -F chat_id="${TELEGRAM_CHAT_ID}" \
