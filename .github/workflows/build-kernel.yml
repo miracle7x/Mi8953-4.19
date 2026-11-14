@@ -1,4 +1,4 @@
-name: Mi8953-4.19
+name: Mi8953-KSU-4.19
 
 on:
   workflow_dispatch:
@@ -35,18 +35,8 @@ env:
 
 jobs:
   build:
-    name: Build (${{ matrix.variant }})
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        variant: [ KSU, NonKSU ]
-
-    env:
-      VARIANT: ${{ matrix.variant }}
-      ZIP_PREFIX: perf-${{ matrix.variant }}-Mi8953
-
+    
     steps:
       - name: 🔥 Telegram Start
         run: |
@@ -54,6 +44,12 @@ jobs:
             -d chat_id="${TELEGRAM_CHAT_ID}" \
             -d parse_mode="HTML" \
             -d text="🚀 <b>Kernel CI started</b>%0A%0A<b>Device:</b> ${DEVICE}%0A<b>Variant:</b> ${VARIANT}%0A<b>Workflow:</b> ${{ github.workflow }}%0A<b>Branch:</b> ${{ github.ref_name }}%0A<b>Commit:</b> <code>${GITHUB_SHA::7}</code>%0A<b>Run:</b> <a href=\"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\">#${{ github.run_number }}</a>" || true
+
+      - name: timezone 
+        run: |
+            echo "BUILD_TIME=$(TZ=Asia/Jakarta date "+%d%m%Y-%H%M")" >> $GITHUB_ENV
+            sudo rm /etc/localtime
+            sudo ln -s /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
 
       - name: 🔄 Checkout
         uses: actions/checkout@v4
@@ -107,7 +103,6 @@ jobs:
           echo "DEFCONFIG=$DEFCONFIG" >> $GITHUB_ENV
           echo "FRAGMENT=$FRAGMENT" >> $GITHUB_ENV
 
-      # Hanya varian KSU
       - name: 📥 Setup BakaSU + NoMount (KSU)
         if: matrix.variant == 'KSU'
         run: |
@@ -132,7 +127,7 @@ jobs:
 
       - name: 📦 Package Anykernel3
         run: |
-          git clone --depth=1 https://github.com/miracle7x/AnyKernel3.git anykernel
+          git clone --depth=1 https://github.com/KanariaAlt/AnyKernel3.git anykernel
           rm -rf anykernel/.git anykernel/README.md anykernel/modules anykernel/patch anykernel/ramdisk
 
           sed -i "s/^kernel.string=.*/kernel.string=perf kernel ${DEVICE} ${VARIANT} by cappuccino/" anykernel/anykernel.sh
@@ -148,11 +143,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ast-playground-ksu
-          path: ast-playground-ksu-*.zip
+          path: AnyKernel3/*.zip
 
       - name: ⬇️ Telegram Upload
         run: |
-          ZIP=$(ls ast-playground-ksu}-*.zip | head -n1)
+          ZIP=$(ls ast-playground-ksu-*.zip | head -n1)
           SIZE=$(du -h "$ZIP" | cut -f1)
           curl -s -F document=@"$ZIP" \
             -F chat_id="${TELEGRAM_CHAT_ID}" \
