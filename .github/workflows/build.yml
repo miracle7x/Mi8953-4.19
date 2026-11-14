@@ -6,8 +6,8 @@ on:
       device:
         description: "Codename device (dipakai untuk cari defconfig & nama zip)"
         required: false
-        default: "Mi8953"
-      defconfig:
+        default: "tissot"
+      defconfig::
         description: "Nama defconfig manual (kosongkan untuk auto-detect)"
         required: false
         default: ""
@@ -28,7 +28,7 @@ env:
   CCACHE_NOHASHDIR: 1
   KBUILD_BUILD_USER: server
   KBUILD_BUILD_HOST: build
-  DEVICE: ${{ inputs.device || 'Mi8953' }}
+  DEVICE: ${{ inputs.device || 'tissot' }}
   INPUT_DEFCONFIG: ${{ inputs.defconfig }}
   TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
   TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -61,8 +61,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /home/runner/.ccache
-          key: ${{ runner.os }}-ccache-mi8953-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-ccache-mi8953-
+          key: ${{ runner.os }}-ccache-tissot-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-ccache-tissot-
 
       - name: 🔧 Deps
         run: |
