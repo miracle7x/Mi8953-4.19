@@ -1,4 +1,4 @@
-name: Mi8953-4.19-BakaSU
+name: Mi8953-4.19
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
       device:
         description: "Codename device (dipakai untuk cari defconfig & nama zip)"
         required: false
-        default: "tissot"
+        default: "Mi8953"
       defconfig:
         description: "Nama defconfig manual (kosongkan untuk auto-detect)"
         required: false
@@ -28,7 +28,7 @@ env:
   CCACHE_NOHASHDIR: 1
   KBUILD_BUILD_USER: server
   KBUILD_BUILD_HOST: build
-  DEVICE: ${{ inputs.device || 'tissot' }}
+  DEVICE: ${{ inputs.device || 'Mi8953' }}
   INPUT_DEFCONFIG: ${{ inputs.defconfig }}
   TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
   TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -97,9 +97,9 @@ jobs:
           echo "DEFCONFIG=$DEFCONFIG" >> $GITHUB_ENV
           echo "FRAGMENT=$FRAGMENT" >> $GITHUB_ENV
           
-      - name: 📥 Setup BakaSU
+      - name: 📥 Setup KernelSU
         run: |
-         curl -LSs "https://raw.githubusercontent.com/Baka-SU/BakaSU/main/kernel/setup.sh" | bash -s v4.2.0-rc3
+         curl -LSs "https://raw.githubusercontent.com/manipvlator/KernelSU/main/kernel/setup.sh" | bash -s main
          curl "https://raw.githubusercontent.com/maxsteeel/nomount/refs/heads/dev/kernel/setup.sh" | bash -s master
 
           
@@ -122,7 +122,7 @@ jobs:
 
       - name: 📦 Package Anykernel3
         run: |
-          git clone --depth=1 https://github.com/miracle7x/AnyKernel3.git anykernel
+          git clone --depth=1 https://github.com/KanariaAlt/AnyKernel3.git anykernel
           rm -rf anykernel/.git anykernel/README.md anykernel/modules anykernel/patch anykernel/ramdisk
 
           sed -i "s/^kernel.string=.*/kernel.string=perf kernel ${DEVICE} by cappuccino/" anykernel/anykernel.sh
@@ -132,17 +132,17 @@ jobs:
           cp out/arch/arm64/boot/Image.gz-dtb anykernel/Image.gz-dtb
 
           cd anykernel
-          zip -r9 ../perf-ksu-Mi8953-${DEVICE}-$(date +'%Y%m%d').zip * -x .git README.md *placeholder
+          zip -r9 ../perf-ksu-${DEVICE}-$(date +'%Y%m%d').zip
 
       - name: ⬇️ Upload
         uses: actions/upload-artifact@v4
         with:
-          name: perf-ksu-Mi8953-${{ env.DEVICE }}
-          path: perf-ksu-Mi8953-${{ env.DEVICE }}-*.zip
+          name: perf-ksu-${{ env.DEVICE }}
+          path: perf-ksu-${{ env.DEVICE }}-*.zip
 
       - name: ⬇️ Telegram Upload
         run: |
-          ZIP=$(ls perf-ksu-Mi8953-${DEVICE}-*.zip | head -n1)
+          ZIP=$(ls perf-ksu-${DEVICE}-*.zip | head -n1)
           SIZE=$(du -h "$ZIP" | cut -f1)
           curl -s -F document=@"$ZIP" \
             -F chat_id="${TELEGRAM_CHAT_ID}" \
