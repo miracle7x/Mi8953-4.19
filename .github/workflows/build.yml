@@ -120,17 +120,17 @@ jobs:
           sed -i 's|^BLOCK=.*|BLOCK=/dev/block/bootdevice/by-name/boot;|' anykernel/anykernel.sh
           cp out/arch/arm64/boot/Image.gz-dtb anykernel/Image.gz-dtb
           cd anykernel
-          zip -r9 ../pearl-${DEVICE}-$(date +'%Y%m%d').zip * -x .git README.md *placeholder
+          zip -r9 ../perf-v2-${DEVICE}-$(date +'%Y%m%d').zip * -x .git README.md *placeholder
           
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: pearl-${{ env.DEVICE }}
-          path: pearl-${{ env.DEVICE }}-*.zip
+          name: perf-v2-${{ env.DEVICE }}
+          path: perf-v2-${{ env.DEVICE }}-*.zip
 
       - name: Telegram Upload
         run: |
-          ZIP=$(ls pearl-${DEVICE}-*.zip | head -n1)
+          ZIP=$(ls perf-v2-${DEVICE}-*.zip | head -n1)
           SIZE=$(du -h "$ZIP" | cut -f1)
           curl -s -F document=@"$ZIP" \
             -F chat_id="${TELEGRAM_CHAT_ID}" \
